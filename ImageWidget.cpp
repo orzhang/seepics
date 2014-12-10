@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QSize>
 
+
 #define IMAGE_SCALE_FACTOR (0.02)
 #define IMAGE_ZOOM_MAX (4.0)
 #define IMAGE_ZOOM_MIN (0.02)
@@ -33,10 +34,16 @@ void ImageWidget::loadImage(const QString &file) {
     m_rotate = 0;
     m_zoom = getFitZoom();
     m_fitZoom = getFitZoom();
+    resetSize();
+}
 
+void ImageWidget::resetSize() {
     fitSize();
     updateCanvas();
-    update();
+    if (m_image.height() < rect().height() && m_image.width() < rect().width()) {
+        setZoom(1);
+        updateCanvas();
+    }
 }
 
 void ImageWidget::clockwise() {
@@ -98,9 +105,9 @@ void ImageWidget::setZoom(double zoom) {
     QRectF newViewPort = m_viewPort;
     double oldZoom = m_zoom;
     double scale = 0;
-
-    if(zoom < getFitZoom())
-        zoom = getFitZoom();
+    double min = 1;
+    if(zoom < qMin(min, getFitZoom()))
+        zoom = qMin(min, getFitZoom());
     if(zoom < IMAGE_ZOOM_MIN) {
         zoom = IMAGE_ZOOM_MIN;
     }
@@ -143,10 +150,10 @@ void ImageWidget::setZoom(double zoom) {
 
 void ImageWidget::wheelEvent ( QWheelEvent * event ) {
     double zoom = m_zoom;
-    if(event->delta() > 0){
-        zoom += IMAGE_SCALE_FACTOR;
-    } else {
+    if(event->delta() > 10){
         zoom -= IMAGE_SCALE_FACTOR;
+    } else if (event->delta() < -10){
+        zoom += IMAGE_SCALE_FACTOR;
     }
     setZoom(zoom);
     updateCanvas();
@@ -156,7 +163,7 @@ double ImageWidget::getFitZoom() {
     double z1;
     double z2;
     double z3;
-
+    double one = 1;
     z1 = (double)rect().height() / (double) m_image.height();
     z2 = (double)rect().width() / (double) m_image.width();
     int zoom = qMin(z1, z2) * 1000;
@@ -172,8 +179,8 @@ void ImageWidget::fitSize() {
     if (m_fitZoom <= m_zoom) {
         m_zoom = z0;
     }
-
     m_fitZoom = z0;
+
 }
 
 void ImageWidget::mouseMoveEvent ( QMouseEvent * event ) {

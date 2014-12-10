@@ -3,17 +3,15 @@
 #include <QString>
 #include <QDir>
 #include <QDebug>
-#include <QDesktopWidget>
 #include "mainwindow.h"
+#include "picapplication.h"
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    PicApplication a(argc, argv);
     MainWindow w;
-    if (argc == 2) {
-        w.LoadImage(argv[1]);
-    }
+    QObject::connect(&a, SIGNAL(eventLoadFile(const QString&)),
+                     &w,SLOT(LoadImage(const QString&)));
     w.show();
-    w.move((QApplication::desktop()->width() - w.width())/2,
-           (QApplication::desktop()->height() - w.height())/2);
+    w.moveCenter();
     return a.exec();
 }

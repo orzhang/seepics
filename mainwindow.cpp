@@ -4,12 +4,17 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QFileDialog>
+#include <QDrag>
+#include <QMimeData>
+#include <QApplication>
+#include <QDesktopWidget>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    setMinimumSize(640, 480);
+    setWindowTitle("SeePICs");
+    setAcceptDrops(true);
     m_imageWidget = new ImageWidget(this);
-    this->setCentralWidget(m_imageWidget);
+    setCentralWidget(m_imageWidget);
     m_index = 0;
     m_openAction = new QAction(tr("&Open"), this);
     m_exitAction = new QAction(tr("&Exit"), this);
@@ -20,19 +25,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(m_exitAction, SIGNAL(triggered()), this, SLOT(close()));
 }
 
-
 void MainWindow::LoadImage(const QString & path) {
 
     QFileInfo info(path);
     QDir dir = info.absoluteDir();
     QList<QByteArray> formats = QImageReader::supportedImageFormats ();
-
     QStringList formatList;
     for(int i = 0; i < formats.size(); i++) {
         formatList << "*." + formats[i];
     }
 
-    dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+    dir.setFilter(QDir::Files | QDir::NoSymLinks);
     dir.setSorting(QDir::Name);
     dir.setNameFilters(formatList);
 
@@ -45,8 +48,13 @@ void MainWindow::LoadImage(const QString & path) {
         m_fileList << fileInfo.absoluteFilePath();
     }
     if (m_fileList.size() != 0) {
-        m_imageWidget->loadImage(m_fileList[m_index]);
-        setWindowTitle(QFileInfo(m_fileList[m_index]).fileName() + " - SeePICs");
+        for(int i = 0; i < m_fileList.size();i++) {
+            if(m_fileList[i] == path) {
+                m_index = i;
+            }
+        }
+        m_imageWidget->loadImage(path);
+        updateTitle();
     }
 }
 
@@ -58,6 +66,8 @@ void MainWindow::openFile() {
     for(int i = 0; i < formats.size(); i++) {
         formatList << "*." + formats[i];
     }
+
+    qDebug()<<formatList;
     QString path = QFileDialog::getOpenFileName(this, tr("Open Image"), ".", formatList.join(" "));
     if (path != "") {
         LoadImage(path);
@@ -81,15 +91,44 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
                 m_imageWidget->loadImage(m_fileList[m_index]);
             break;
         case Qt::Key_Up:
-            m_imageWidget->clockwise();
-            break;
-        case Qt::Key_Down:
             m_imageWidget->anticlockwise();
             break;
+        case Qt::Key_Down:
+            m_imageWidget->clockwise();
+            break;
         case Qt::Key_Space:
-                m_index = (m_index + 1) % m_fileList.size();
-                m_imageWidget->loadImage(m_fileList[m_index]);
+            m_imageWidget->resetSize();
             break;
     }
-    setWindowTitle(QFileInfo(m_fileList[m_index]).fileName() + " - SeePICs");
+    updateTitle();
+}
+
+void MainWindow::updateTitle()
+{
+    if(m_fileList.size() > 0) {
+        QString fileName = QFileInfo(m_fileList[m_index]).fileName();
+        QString title = QString("%1 %2/%3 - SeePICs").arg(fileName).arg(m_index).arg(m_fileList.size());
+        setWindowTitle(title);
+    }
+}
+
+void MainWindow::moveCenter() {
+
+    QWidget * desktop = QApplication::desktop()->screen();
+    move((desktop ->width() - width()) / 2,
+           (desktop->height() - height()) / 2);
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+    foreach (QUrl url, event->mimeData()->urls()) {
+        qDebug()<<url.toLocalFile();
+    }
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasUrls()) {
+        event->acceptProposedAction();
+    }
 }

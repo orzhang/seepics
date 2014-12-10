@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QImage>
 #include <QCursor>
+#include <QDropEvent>
+#include <QDragEnterEvent>
 class ImageWidget : public QWidget
 {
     Q_OBJECT
@@ -13,6 +15,7 @@ public:
     ~ImageWidget();
     void loadImage(const QString & file);
     void fitSize();
+    void resetSize();
     void updateCanvas();
     double getFitZoom();
 protected:

@@ -10,10 +10,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = 0);
+    void updateTitle();
+    void moveCenter();
 protected:
     void keyPressEvent ( QKeyEvent * event );
+    void dropEvent(QDropEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
 signals:
-
 public slots:
     void LoadImage(const QString & path);
     void openFile();
