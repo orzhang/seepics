@@ -107,7 +107,7 @@ void MainWindow::updateTitle()
 {
     if(m_fileList.size() > 0) {
         QString fileName = QFileInfo(m_fileList[m_index]).fileName();
-        QString title = QString("%1 %2/%3 - SeePICs").arg(fileName).arg(m_index).arg(m_fileList.size());
+        QString title = QString("%1 %2/%3 - SeePICs").arg(fileName).arg(m_index + 1).arg(m_fileList.size());
         setWindowTitle(title);
     }
 }
