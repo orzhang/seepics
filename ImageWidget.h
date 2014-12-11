@@ -15,7 +15,6 @@ public:
     ~ImageWidget();
     void loadImage(const QString & file);
     void fitSize();
-    void resetSize();
     void updateCanvas();
     double getFitZoom();
 protected:
@@ -27,6 +26,7 @@ protected:
     void mouseReleaseEvent ( QMouseEvent * event );
 
 public slots:
+    void resetSize();
     void setZoom(double zoom);
     void clockwise();
     void anticlockwise();

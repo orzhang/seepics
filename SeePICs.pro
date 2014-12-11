@@ -18,9 +18,17 @@ QMAKE_INFO_PLIST = Info.plist
 SOURCES += main.cpp\
     ImageWidget.cpp \
     mainwindow.cpp \
-    picapplication.cpp
+    picapplication.cpp \
+    controlwidget.cpp
 
 HEADERS  += \
     ImageWidget.h \
     mainwindow.h \
-    picapplication.h
+    picapplication.h \
+    controlwidget.h
+
+RESOURCES += \
+    resource.qrc
+
+FORMS += \
+    controlwidget.ui

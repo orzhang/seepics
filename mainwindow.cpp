@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);
     m_imageWidget = new ImageWidget(this);
     setCentralWidget(m_imageWidget);
+    m_controlWidget = new ControlWidget(this);
     m_index = 0;
     m_openAction = new QAction(tr("&Open"), this);
     m_exitAction = new QAction(tr("&Exit"), this);
@@ -23,6 +24,13 @@ MainWindow::MainWindow(QWidget *parent) :
     m_fileMenu->addAction(m_exitAction);
     QObject::connect(m_openAction, SIGNAL(triggered()), this, SLOT(openFile()));
     QObject::connect(m_exitAction, SIGNAL(triggered()), this, SLOT(close()));
+
+
+    QObject::connect(m_controlWidget->pushButtonClock(), SIGNAL(clicked()), m_imageWidget, SLOT(clockwise()));
+    QObject::connect(m_controlWidget->pushButtonAntiClock(), SIGNAL(clicked()), m_imageWidget, SLOT(anticlockwise()));
+    QObject::connect(m_controlWidget->pushButtonFitSize(), SIGNAL(clicked()), m_imageWidget, SLOT(resetSize()));
+    QObject::connect(m_controlWidget->pushButtonRight(), SIGNAL(clicked()), this, SLOT(nextImage()));
+    QObject::connect(m_controlWidget->pushButtonLeft(), SIGNAL(clicked()), this, SLOT(previousImage()));
 }
 
 void MainWindow::LoadImage(const QString & path) {
@@ -73,6 +81,25 @@ void MainWindow::openFile() {
         LoadImage(path);
     }
 }
+void MainWindow::nextImage()
+{
+    if (m_fileList.size() == 0)
+        return;
+
+    m_index = (m_index + 1) % m_fileList.size();
+    m_imageWidget->loadImage(m_fileList[m_index]);
+}
+
+void MainWindow::previousImage()
+{
+    if (m_fileList.size() == 0)
+        return;
+    m_index --;
+    if (m_index < 0) {
+        m_index = m_fileList.size() - 1;
+    }
+    m_imageWidget->loadImage(m_fileList[m_index]);
+}
 
 void MainWindow::keyPressEvent ( QKeyEvent * event )
 {
@@ -80,15 +107,10 @@ void MainWindow::keyPressEvent ( QKeyEvent * event )
         return;
     switch(event->key()) {
         case Qt::Key_Right:
-                m_index = (m_index + 1) % m_fileList.size();
-                m_imageWidget->loadImage(m_fileList[m_index]);
+            nextImage();
             break;
         case Qt::Key_Left:
-                m_index --;
-                if (m_index < 0) {
-                    m_index = m_fileList.size() - 1;
-                }
-                m_imageWidget->loadImage(m_fileList[m_index]);
+            previousImage();
             break;
         case Qt::Key_Up:
             m_imageWidget->anticlockwise();
@@ -131,4 +153,10 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
     if (event->mimeData()->hasUrls()) {
         event->acceptProposedAction();
     }
+}
+
+void MainWindow::resizeEvent ( QResizeEvent * event ) {
+    int x = (rect().width() - m_controlWidget->width()) / 2;
+    int y = rect().bottom() - m_controlWidget->height();
+    m_controlWidget->move(x, y);
 }

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icon/anticlock.png</file>
+        <file>icon/clock.png</file>
+        <file>icon/fitsize.png</file>
+        <file>icon/left.png</file>
+        <file>icon/right.png</file>
+    </qresource>
+</RCC>
