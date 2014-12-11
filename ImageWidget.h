@@ -41,7 +41,7 @@ private:
     QPointF m_oldPoint;
     double m_zoom;
     double m_fitZoom;
-    int m_rotate = 0;
+    int m_rotate;
     Qt::CursorShape m_cursor;
 };
 

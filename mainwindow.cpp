@@ -88,6 +88,7 @@ void MainWindow::nextImage()
 
     m_index = (m_index + 1) % m_fileList.size();
     m_imageWidget->loadImage(m_fileList[m_index]);
+    updateTitle();
 }
 
 void MainWindow::previousImage()
@@ -99,6 +100,7 @@ void MainWindow::previousImage()
         m_index = m_fileList.size() - 1;
     }
     m_imageWidget->loadImage(m_fileList[m_index]);
+    updateTitle();
 }
 
 void MainWindow::keyPressEvent ( QKeyEvent * event )
