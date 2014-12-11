@@ -13,9 +13,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setWindowTitle("SeePICs");
     setAcceptDrops(true);
+    setMouseTracking(true);
     m_imageWidget = new ImageWidget(this);
     setCentralWidget(m_imageWidget);
+    centralWidget()->setMouseTracking(true);
     m_controlWidget = new ControlWidget(this);
+    m_controlWidget->hide();
     m_index = 0;
     m_openAction = new QAction(tr("&Open"), this);
     m_exitAction = new QAction(tr("&Exit"), this);
@@ -24,8 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_fileMenu->addAction(m_exitAction);
     QObject::connect(m_openAction, SIGNAL(triggered()), this, SLOT(openFile()));
     QObject::connect(m_exitAction, SIGNAL(triggered()), this, SLOT(close()));
-
-
     QObject::connect(m_controlWidget->pushButtonClock(), SIGNAL(clicked()), m_imageWidget, SLOT(clockwise()));
     QObject::connect(m_controlWidget->pushButtonAntiClock(), SIGNAL(clicked()), m_imageWidget, SLOT(anticlockwise()));
     QObject::connect(m_controlWidget->pushButtonFitSize(), SIGNAL(clicked()), m_imageWidget, SLOT(resetSize()));
@@ -157,8 +158,27 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
     }
 }
 
-void MainWindow::resizeEvent ( QResizeEvent * event ) {
+void MainWindow::resizeEvent ( QResizeEvent * event )
+{
     int x = (rect().width() - m_controlWidget->width()) / 2;
-    int y = rect().bottom() - m_controlWidget->height();
+    int y = rect().bottom() - m_controlWidget->height() - 10;
     m_controlWidget->move(x, y);
+}
+
+void MainWindow::mouseMoveEvent ( QMouseEvent * event )
+{
+    int x = (rect().width() - m_controlWidget->width()) / 2;
+    int y = rect().bottom() - m_controlWidget->height() - 10;
+    int width = m_controlWidget->width();
+    int height = m_controlWidget->width();
+    x-=10;
+    y-=10;
+    width += 20;
+    height += 20;
+    QRect rect(x,y,width,height);
+    if(rect.contains(event->pos())) {
+        m_controlWidget->show();
+    } else {
+        m_controlWidget->hide();
+    }
 }

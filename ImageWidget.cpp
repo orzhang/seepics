@@ -18,6 +18,7 @@ ImageWidget::ImageWidget(QWidget *parent)
     m_image = QImage(640, 480, QImage::Format_RGB32);
     m_image.fill(Qt::gray);
     m_cursor = Qt::ArrowCursor;
+    m_mousePressed = false;
     fitSize();
     updateCanvas();
     update();
@@ -28,7 +29,8 @@ ImageWidget::~ImageWidget()
 
 }
 
-void ImageWidget::loadImage(const QString &file) {
+void ImageWidget::loadImage(const QString &file)
+{
 
     m_image.load(file);
     m_rotate = 0;
@@ -37,7 +39,8 @@ void ImageWidget::loadImage(const QString &file) {
     resetSize();
 }
 
-void ImageWidget::resetSize() {
+void ImageWidget::resetSize()
+{
     fitSize();
     updateCanvas();
     if (m_image.height() < rect().height() && m_image.width() < rect().width()) {
@@ -46,7 +49,8 @@ void ImageWidget::resetSize() {
     }
 }
 
-void ImageWidget::clockwise() {
+void ImageWidget::clockwise()
+{
     m_rotate = 90;
     QTransform myTransform;
     myTransform.rotate(m_rotate);
@@ -56,7 +60,8 @@ void ImageWidget::clockwise() {
     update();
 }
 
-void ImageWidget::anticlockwise() {
+void ImageWidget::anticlockwise()
+{
     m_rotate = -90;
     QTransform myTransform;
     myTransform.rotate(m_rotate);
@@ -66,7 +71,8 @@ void ImageWidget::anticlockwise() {
     update();
 }
 
-void ImageWidget::paintEvent ( QPaintEvent * event ){
+void ImageWidget::paintEvent ( QPaintEvent * event )
+{
     QPainter p(this);
 
     p.fillRect(rect(), QBrush(Qt::black));
@@ -81,7 +87,8 @@ void ImageWidget::paintEvent ( QPaintEvent * event ){
                 qRound(m_viewPort.height()/m_zoom));
 }
 
-void ImageWidget::updateCanvas() {
+void ImageWidget::updateCanvas()
+{
     double width = m_image.width() * m_zoom;
     double height = m_image.height() * m_zoom;
     int x = (rect().width() - width) / 2 ;
@@ -101,7 +108,8 @@ void ImageWidget::updateCanvas() {
     m_canvas.setY(y);
 }
 
-void ImageWidget::setZoom(double zoom) {
+void ImageWidget::setZoom(double zoom)
+{
     QRectF newViewPort = m_viewPort;
     double oldZoom = m_zoom;
     double scale = 0;
@@ -148,7 +156,8 @@ void ImageWidget::setZoom(double zoom) {
     update();
 }
 
-void ImageWidget::wheelEvent ( QWheelEvent * event ) {
+void ImageWidget::wheelEvent ( QWheelEvent * event )
+{
     double zoom = m_zoom;
     if(event->delta() > 10){
         zoom -= IMAGE_SCALE_FACTOR;
@@ -159,7 +168,8 @@ void ImageWidget::wheelEvent ( QWheelEvent * event ) {
     updateCanvas();
 }
 
-double ImageWidget::getFitZoom() {
+double ImageWidget::getFitZoom()
+{
     double z1;
     double z2;
     double z3;
@@ -172,7 +182,8 @@ double ImageWidget::getFitZoom() {
     return z3;
 }
 
-void ImageWidget::fitSize() {
+void ImageWidget::fitSize()
+{
 
     double z0 = getFitZoom();
 
@@ -183,14 +194,17 @@ void ImageWidget::fitSize() {
 
 }
 
-void ImageWidget::mouseMoveEvent ( QMouseEvent * event ) {
+void ImageWidget::mouseMoveEvent ( QMouseEvent * event )
+{
 
     QPointF newPoint = event->pos();
+    QWidget::mouseMoveEvent(event);
     double dx = (newPoint.x() - m_oldPoint.x()) * m_zoom;
     double dy = (newPoint.y() - m_oldPoint.y()) * m_zoom;
     double width = m_image.width() * m_zoom;
     double height = m_image.height() * m_zoom;
-
+    if (m_mousePressed == false)
+        return;
     m_viewPort.moveLeft(m_oldViewPort.left() - dx);
 
     if (m_viewPort.right() > width) {
@@ -210,11 +224,12 @@ void ImageWidget::mouseMoveEvent ( QMouseEvent * event ) {
     if (m_viewPort.top() < 0) {
         m_viewPort.moveTop(0);
     }
-
     update();
 }
 
-void ImageWidget::mousePressEvent ( QMouseEvent * event ){
+void ImageWidget::mousePressEvent ( QMouseEvent * event )
+{
+    m_mousePressed = true;
     m_oldPoint = event->pos();
     m_oldViewPort = m_viewPort;
     if (m_cursor == Qt::OpenHandCursor) {
@@ -223,14 +238,17 @@ void ImageWidget::mousePressEvent ( QMouseEvent * event ){
     }
 }
 
-void ImageWidget::mouseReleaseEvent ( QMouseEvent * event ) {
+void ImageWidget::mouseReleaseEvent ( QMouseEvent * event )
+{
+    m_mousePressed = false;
     if (m_cursor == Qt::ClosedHandCursor) {
         m_cursor = Qt::OpenHandCursor;
         setCursor(Qt::OpenHandCursor);
     }
 }
 
-void ImageWidget::resizeEvent ( QResizeEvent * event ) {
+void ImageWidget::resizeEvent ( QResizeEvent * event )
+{
     fitSize();
     updateCanvas();
 }

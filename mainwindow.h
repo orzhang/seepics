@@ -18,6 +18,7 @@ protected:
     void dropEvent(QDropEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void resizeEvent ( QResizeEvent * event );
+    void mouseMoveEvent ( QMouseEvent * event );
 signals:
 public slots:
     void LoadImage(const QString & path);
