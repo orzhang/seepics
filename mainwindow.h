@@ -25,6 +25,7 @@ public slots:
     void openFile();
     void nextImage();
     void previousImage();
+    void aboutDialog();
 private:
     ImageWidget * m_imageWidget;
     ControlWidget * m_controlWidget;
@@ -32,6 +33,7 @@ private:
     QMenu * m_fileMenu;
     QAction * m_openAction;
     QAction * m_exitAction;
+    QAction * m_aboutAction;
     int m_index;
 };
 

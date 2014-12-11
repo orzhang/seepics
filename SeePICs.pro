@@ -11,6 +11,7 @@ CONFIG += qt warn_on thread create_prl link_prl
 macx {
 LIBS    += -framework Carbon
 }
+ICON = icon/app.icns
 TARGET = SeePics
 TEMPLATE = app
 QMAKE_INFO_PLIST = Info.plist
@@ -19,16 +20,19 @@ SOURCES += main.cpp\
     ImageWidget.cpp \
     mainwindow.cpp \
     picapplication.cpp \
-    controlwidget.cpp
+    controlwidget.cpp \
+    aboutdialog.cpp
 
 HEADERS  += \
     ImageWidget.h \
     mainwindow.h \
     picapplication.h \
-    controlwidget.h
+    controlwidget.h \
+    aboutdialog.h
 
 RESOURCES += \
     resource.qrc
 
 FORMS += \
-    controlwidget.ui
+    controlwidget.ui \
+    aboutdialog.ui

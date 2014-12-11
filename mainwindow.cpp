@@ -8,6 +8,7 @@
 #include <QMimeData>
 #include <QApplication>
 #include <QDesktopWidget>
+#include "aboutdialog.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
@@ -22,11 +23,14 @@ MainWindow::MainWindow(QWidget *parent) :
     m_index = 0;
     m_openAction = new QAction(tr("&Open"), this);
     m_exitAction = new QAction(tr("&Exit"), this);
+    m_aboutAction = new QAction(tr("&About"), this);
     m_fileMenu = menuBar()->addMenu(tr("&File"));
     m_fileMenu->addAction(m_openAction);
     m_fileMenu->addAction(m_exitAction);
+    m_fileMenu->addAction(m_aboutAction);
     QObject::connect(m_openAction, SIGNAL(triggered()), this, SLOT(openFile()));
     QObject::connect(m_exitAction, SIGNAL(triggered()), this, SLOT(close()));
+    QObject::connect(m_aboutAction, SIGNAL(triggered()), this, SLOT(aboutDialog()));
     QObject::connect(m_controlWidget->pushButtonClock(), SIGNAL(clicked()), m_imageWidget, SLOT(clockwise()));
     QObject::connect(m_controlWidget->pushButtonAntiClock(), SIGNAL(clicked()), m_imageWidget, SLOT(anticlockwise()));
     QObject::connect(m_controlWidget->pushButtonFitSize(), SIGNAL(clicked()), m_imageWidget, SLOT(resetSize()));
@@ -181,4 +185,10 @@ void MainWindow::mouseMoveEvent ( QMouseEvent * event )
     } else {
         m_controlWidget->hide();
     }
+}
+
+void MainWindow::aboutDialog()
+{
+    AboutDialog dlg(this);
+    dlg.exec();
 }

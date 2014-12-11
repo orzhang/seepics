@@ -105,7 +105,7 @@
 	<key>CFBundleExecutable</key>
         <string>SeePics</string>
 	<key>CFBundleIconFile</key>
-	<string>application.icns</string>
+	<string>app.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.orionzhang.seepics</string>
 	<key>CFBundleInfoDictionaryVersion</key>
