@@ -5,3 +5,4 @@ qrc_*
 ui_*
 *.o
 SeePics
+Makefile

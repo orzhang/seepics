@@ -17,6 +17,7 @@ public:
     void fitSize();
     void updateCanvas();
     double getFitZoom();
+    void generateBackground(const QSize & size);
 protected:
     void paintEvent ( QPaintEvent * event );
     void wheelEvent ( QWheelEvent * event );
@@ -38,6 +39,7 @@ private:
     QRectF m_oldViewPort;
     QRectF m_canvas;
     QImage m_image;
+    QPixmap  m_background;
     QPointF m_oldPoint;
     double m_zoom;
     double m_fitZoom;

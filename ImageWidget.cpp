@@ -16,6 +16,7 @@ ImageWidget::ImageWidget(QWidget *parent)
     setMinimumSize(640, 480);
     m_rotate = 0;
     m_image = QImage(640, 480, QImage::Format_RGB32);
+    m_background = QPixmap (m_image.size());
     m_image.fill(Qt::gray);
     m_cursor = Qt::ArrowCursor;
     m_mousePressed = false;
@@ -37,6 +38,7 @@ void ImageWidget::loadImage(const QString &file)
     m_zoom = getFitZoom();
     m_fitZoom = getFitZoom();
     resetSize();
+    generateBackground(m_image.size()*m_zoom);
 }
 
 void ImageWidget::resetSize()
@@ -77,7 +79,13 @@ void ImageWidget::paintEvent ( QPaintEvent * event )
 
     p.fillRect(rect(), QBrush(Qt::black));
 
+    if (m_image.hasAlphaChannel()) {
+        p.drawPixmap(m_canvas.x(), m_canvas.y(), m_background);
+    }
+
     p.scale(m_zoom, m_zoom);
+
+
     p.drawImage(qRound(m_canvas.x() / m_zoom),
                 qRound(m_canvas.y() / m_zoom),
                 m_image,
@@ -85,6 +93,7 @@ void ImageWidget::paintEvent ( QPaintEvent * event )
                 qRound(m_viewPort.y() / m_zoom),
                 qRound(m_viewPort.width() /m_zoom),
                 qRound(m_viewPort.height()/m_zoom));
+
 }
 
 void ImageWidget::updateCanvas()
@@ -153,6 +162,7 @@ void ImageWidget::setZoom(double zoom)
         m_cursor = Qt::ArrowCursor;
         setCursor(m_cursor);
     }
+    generateBackground(m_image.size() * m_zoom);
     update();
 }
 
@@ -173,7 +183,6 @@ double ImageWidget::getFitZoom()
     double z1;
     double z2;
     double z3;
-    double one = 1;
     z1 = (double)rect().height() / (double) m_image.height();
     z2 = (double)rect().width() / (double) m_image.width();
     int zoom = qMin(z1, z2) * 1000;
@@ -251,4 +260,26 @@ void ImageWidget::resizeEvent ( QResizeEvent * event )
 {
     fitSize();
     updateCanvas();
+    generateBackground(m_image.size() * m_zoom);
+}
+
+
+void ImageWidget::generateBackground(const QSize & size)
+{
+    int bs = 10;
+    if (!m_image.hasAlphaChannel())
+        return;
+    m_background = QPixmap(size);
+    QPainter p(&m_background);
+    int x = (size.width() + bs) / bs;
+    int y = (size.height() + bs) / bs;
+    for(int i = 0; i < y; i++) {
+        for(int j = 0; j < x; j++) {
+            if ((i +j ) % 2){
+                p.fillRect(j*bs,i*bs,bs,bs,QBrush(Qt::gray));
+            } else {
+                p.fillRect(j*bs,i*bs,bs,bs,QBrush(QColor(230,230,230)));
+            }
+        }
+    }
 }
