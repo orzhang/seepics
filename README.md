@@ -1,12 +1,13 @@
 SeePics
 =======
-* Since MacOS X doesn't have a lightwigth image viewer, SeePics is the one which includes many usefull features.
-* I want to keep SeePics as simple as possible.
+*SeePics is an opensource light weight image viewer.
+*SeePics can browse multiple images in folder easier than Mac Preview.
 
 Feature
 =======
-* Left/Right Arrorw Key to switch images
-* Space Key to next image
-* Up/Down Key to roate image
+*Left/Right Key to switch images
+*Space Key to fit image size
+*Up/Down Key to rotate image
 
+[SeePics Home Page](http://www.high4app.com/?page_id=10)
 [Click Here to Download](http://pan.baidu.com/s/1kTBTZ4j)
