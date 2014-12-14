@@ -8,3 +8,5 @@ Feature
 * Left/Right Arrorw Key to switch images
 * Space Key to next image
 * Up/Down Key to roate image
+
+[Click Here to Download](http://pan.baidu.com/s/1kTBTZ4j)
